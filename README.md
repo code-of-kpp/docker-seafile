@@ -22,7 +22,7 @@ Run this image:
 
 Optionaly run nginx image.
 
-## Enviroment variables:
+## Environment variables
 
 - `MYSQL_HOST` - default: `db` comes from `--link some-mysql:db`
 - `MYSQL_USER` - default comes from corresponding variable from linked machine
