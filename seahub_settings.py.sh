@@ -31,6 +31,12 @@ SERVER_EMAIL = EMAIL_HOST_USER
 EOF
 fi
 
+if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
+    if [ -z "$SERVICE_URL" ]; then
+        export SERVICE_URL=$SITE_BASE/seafhttp
+    fi
+fi
+
 cat >> $CONF << EOFFF
 # Enable cloude mode and hide \`Organization\` tab.
 CLOUD_MODE = ${CLOUD_MODE:-False}

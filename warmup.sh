@@ -19,6 +19,13 @@ bash /usr/local/bin/seahub_settings.py.sh
 
 ln -s /usr/local/seafile/conf/seafdav.conf /etc/seafile/
 
+if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
+    export WEBDAV_FASTCGI=true
+    if [ -z "$SERVICE_BASE" ]; then
+        export SERVICE_BASE=$SITE_BASE/seafhttp
+    fi
+fi
+
 cat > /usr/local/seafile/conf/seafdav.conf <<EOF
 [WEBDAV]
 enabled = true
@@ -48,7 +55,7 @@ if check_init_admin.need_create_admin():
 python -c "$_create_"
 unset _create_
 
-if [ -n "$USE_FASTCGI" ]; then
+if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
    ./seahub.sh start-fastcgi
 else
    ./seahub.sh start
