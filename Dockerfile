@@ -10,9 +10,6 @@ ENV \
 
 EXPOSE 1201 10001 8000 8080 8082
 
-ADD *.sh /usr/local/bin/
-ADD *.py /usr/local/bin/
-
 RUN \
     export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && dpkg --clear-selections && apt-get autoremove -y && \
@@ -28,6 +25,9 @@ RUN \
     mv seafile-server* seafile-server && \
     SUDO_FORCE_REMOVE=yes apt-get purge -y wget binutils perl libpython3.4-stdlib manpages-dev ucf sudo && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ADD *.sh /usr/local/bin/
+ADD *.py /usr/local/bin/
 
 VOLUME /seafile-data
 

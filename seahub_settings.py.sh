@@ -97,7 +97,7 @@ ENABLE_MAKE_GROUP_PUBLIC = False
 ENABLE_THUMBNAIL = True
 
 # Absolute filesystem path to the directory that will hold thumbnail files.
-THUMBNAIL_ROOT = "/usr/local/seahub/seahub-data/thumbnail/thumb/"
+THUMBNAIL_ROOT = "/usr/local/seafile/seahub-data/thumbnail/thumb/"
 THUMBNAIL_EXTENSION = "png"
 THUMBNAIL_DEFAULT_SIZE = "24"
 PREVIEW_DEFAULT_SIZE = "100"

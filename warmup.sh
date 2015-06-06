@@ -27,9 +27,8 @@ fastcgi = ${WEBDAV_FASTCGI:-false}
 share_name = /
 EOF
 
-cat >> /usr/local/seafile/ccnet/ccnet.conf <<EOF
-SERVICE_URL = ${SERVICE_BASE:-$SITE_BASE:8082}
-EOF
+sed -i "s@SERVICE_URL = http://127.0.0.1:8000@SERVICE_URL = ${SERVICE_BASE:-$SITE_BASE/}@" \
+    /usr/local/seafile/ccnet/ccnet.conf
 
 true | /usr/local/seafile/seafile-server/upgrade/minor-upgrade.sh
 

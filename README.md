@@ -31,7 +31,7 @@ Optionaly run nginx image.
 - `MYSQL_ROOT_PASSWORD` - default comes from corresponding variable from linked machine
 - `ADMIN_EMAIL` - Admin email (login) for all services (the default is `admin@example.com` - change it!)
 - `ADMIN_PASSWORD` - Admin password (the default is `youcannotguesit` - change it!)
-- `QUOTA` - default user quota in GB, integer only
+- `QUOTA` - default: 2 - user quota in GB, integer only
 - `KEEP_DAYS` - days to keep history
 - `MAX_UPLOAD` - maximum upload file size
 - `MAX_DOWNLOAD_DIR` - maximum download directory size
@@ -42,15 +42,15 @@ Optionaly run nginx image.
 - `EMAIL_USE_TLS` - default: `True` - use TLS for SMPT
 - `EMAIL_HOST_USER` - login to `EMAIL_HOST` with this user
 - `EMAIL_HOST_PASSWORD` - enable email sending, use this password to login to `EMAIL_HOST`
-- `CLOUD_MODE` - default: `False` - enable cloude mode and hide `Organization` tab
+- `CLOUD_MODE` - default: `False` - enable cloud mode and hide `Organization` tab
 - `ENABLE_SIGNUP` - deafult: `False` - enable registration on web
 - `TIME_ZONE` - default: `UTC`
 - `SITE_BASE` - default: `http://www.example.com` - set this to seahub website's URL. This URL is contained in email notifications
 - `SITE_NAME` - default: `example.com` - set this to your website's name. This is contained in email notifications
 - `SITE_TITLE` - default: `Seafile` - set seahub website's title
 - `SITE_ROOT` - default: `/` - if you don't want to run seahub website on your site's root path, set this option to your preferred path, e.g. setting it to `/seahub/` would run seahub on `http://example.com/seahub/`
-- `SERVICE_BASE` - default: `SITE_BASE:8082`
-- `SERVICE_URL` - default: `SITE_BASE:8082/`
+- `SERVICE_BASE` - default: `SITE_BASE`
+- `SERVICE_URL` - default: `SITE_BASE/`
 - `ACTIVATE_AFTER_REGISTRATION` - default: `True` - activate user when registration complete. Default is `True`, if set to `False`, new users need to be activated by admin in admin panel.
 - `WEBDAV_FASTCGI` - default: `false` - serve FastCGI for webdav on port 8080 for reverse proxy
 - `USE_FASTCGI` - serve FastCGI for Seahub on port 8000 for reverse proxy
