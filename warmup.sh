@@ -26,12 +26,19 @@ if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
     fi
 fi
 
+if [ -n "$WEBDAV_FASTCGI" -a "$WEBDAV_FASTCGI" != "false" ]; then
+    if [ -z "$WEBDAV_SHARE_NAME" ]; then
+        export WEBDAV_SHARE_NAME=/seafdav
+    fi
+fi
+
 cat > /usr/local/seafile/conf/seafdav.conf <<EOF
 [WEBDAV]
 enabled = true
+host= 0.0.0.0
 port = 8080
 fastcgi = ${WEBDAV_FASTCGI:-false}
-share_name = /
+share_name = ${WEBDAV_SHARE_NAME:-/}
 EOF
 
 sed -i "s@SERVICE_URL = http://127.0.0.1:8000@SERVICE_URL = ${SERVICE_BASE:-$SITE_BASE/}@" \

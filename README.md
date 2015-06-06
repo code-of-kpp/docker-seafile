@@ -33,11 +33,11 @@ Run mariadb or mysql image:
             -e SEAFILE_FASTCGI_HOST=0.0.0.0 \
             -d podshumok/seafile
 
-2. Create `/SOME_ABS_PATH/conf.d/default.conf` (nginx configuration file):
+2. Create `/$SOME_ABS_PATH/conf.d/default.conf` (nginx configuration file):
 
         mkdir -p /$SOME_ABS_PATH/conf.d
         wget https://github.com/podshumok/docker-seafile/raw/master/conf.d/default.conf \
-            -O /SOME_ABS_PATH/conf.d/default.conf
+            -O /$SOME_ABS_PATH/conf.d/default.conf
 
 3. Run nginx image:
 
@@ -66,7 +66,7 @@ Run mariadb or mysql image:
 - `KEEP_DAYS` - days to keep history
 - `MAX_UPLOAD` - maximum upload file size
 - `MAX_DOWNLOAD_DIR` - maximum download directory size
-- `MEMCACHE_HOST` - enable memcache at this host for cache
+- `MEMCACHE_HOST` - enable memcache at this host for cache (just `--link some-memcached:memcache`)
 - `MEMCACHE_PORT` - default: `11211`
 - `EMAIL_HOST` - default: `smtp.gmail.com`, SMPT server for email sending
 - `EMAIL_PORT` - default: `587`
@@ -85,3 +85,4 @@ Run mariadb or mysql image:
 - `ACTIVATE_AFTER_REGISTRATION` - default: `True` - activate user when registration complete. Default is `True`, if set to `False`, new users need to be activated by admin in admin panel.
 - `SEAFILE_FASTCGI_HOST` - default: not set - serve FastCGI for Seahub on `$SEAFILE_FASTCGI_HOST:8000` for reverse proxy
 - `WEBDAV_FASTCGI` - default: `false` if `$SEAFILE_FASTCGI_HOST` is not set, `true` otherwise - serve FastCGI for webdav on port `8080` for reverse proxy
+- `WEBDAV_SHARE_NAME` - default: `/` if `WEBDAV_FASTCGI` equals `false` or is not set, `/seafdav` otherwise
