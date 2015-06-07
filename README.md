@@ -1,6 +1,8 @@
 # Seafile docker image
 
-Run mariadb or mysql image:
+## Run manually
+
+First, you need to run mariadb or mysql image:
 
     docker run \
         --name seafile-mariadb \
@@ -10,7 +12,7 @@ Run mariadb or mysql image:
         -e MYSQL_PASSWORD=everybodyknowsthat \
         -d mariadb:latest
 
-## Run this image
+### Run this image
 
     docker run \
         --name seafile \
@@ -20,7 +22,7 @@ Run mariadb or mysql image:
         -e SITE_BASE=http://127.0.0.1 \
         -d podshumok/seafile
 
-## Run with nginx
+### Run with nginx
 
 1. Run this image with `-e SEAFILE_FASTCGI_HOST=0.0.0.0`:
 
@@ -51,6 +53,68 @@ Run mariadb or mysql image:
             -v /$SOME_EMPTY_DIR:/etc/nginx/certs \
             -v /$SOME_EMPTY_DIR:/var/www/html \
             -d nginx
+
+
+## Run seafile with docker-compose
+
+Create project tree:
+
+    seafile/
+    |--- conf.d/
+    |----|--- default.conf  # nginx configuration file
+    |----ssl/               # (optional)
+    |----|--- seafile.crt   # your cacert.pem
+    |----|--- seafile.key   # your privkey.pem
+    |--- data/
+    |--- docker-compose.yml
+
+Template  for `conf.d/default.conf` is [here](https://github.com/podshumok/docker-seafile/raw/master/conf.d/default.conf).
+If you need HTTPS replace `listen 80;` with `listen 443 ssl;` and add `ssl_certificate` and `ssl_certificate_key` e.g.:
+
+    server {
+        listen 443 ssl;
+        ssl_certificate         certs/seafile.crt;
+        ssl_certificate_key     certs/seafile.key;
+        ...
+
+`docker-compose.yml` sketch:
+
+    mariadb:
+      image: mariadb:latest
+      volumes:
+        - ./data/maria:/var/lib/mysql
+        - ./data/log/maria:/var/log/mysql
+     environment:
+        - MYSQL_ROOT_PASSWORD=pleasechangeitorelse
+        - MYSQL_USER=seafile
+        - MYSQL_PASSWORD=thisoneshouldbechangedtoo
+
+    main:
+      image: podshumok/seafile
+      volumes:
+        - ./data/seafile:/seafile-data/
+        - ./data/log/seafile:/var/log/seafile
+      links:
+        - mariadb:db
+      environment:
+        # replace http:// with https:// for SSL configuration
+        - SITE_BASE=http://127.0.0.1
+        - SEAFILE_FASTCGI_HOST=0.0.0.0
+
+    nginx:
+      image: nginx
+      ports:
+        - "443:443"
+      links:
+        - seafile
+      volumes:
+        - ./conf.d:/etc/nginx/conf.d:ro
+        - ./ssl:/etc/nginx/certs:ro
+        - ./data/log/nginx:/var/log/nginx
+        - /tmp/empty:/etc/nginx/sites-enabled:ro
+        - /tmp/empty:/var/www/html:ro
+
+Now just run `docker-compose up` in the project root.
 
 
 ## Environment variables
