@@ -15,7 +15,7 @@ Run mariadb or mysql image:
     docker run \
         --name seafile \
         -v /$SOME_ABS_PATH/seafile-data:/seafile-data/ \
-        -p 80:8000 -p 8082:8082 -p 8080:8080 -p 10001:10001 -p 1201:1201 \
+        -p 80:8000 -p 8082:8082 -p 8080:8080 -p 10001:10001 -p 12001:12001 \
         --link seafile-mariadb:db \
         -e SITE_BASE=http://127.0.0.1 \
         -d podshumok/seafile
@@ -27,7 +27,7 @@ Run mariadb or mysql image:
         docker run \
            --name seafile \
             -v /$SOME_ABS_PATH/seafile-data:/seafile-data/ \
-            -p 10001:10001 -p 1201:1201 \
+            -p 10001:10001 -p 12001:12001 \
             --link seafile-mariadb:db \
             -e SITE_BASE=http://127.0.0.1 \
             -e SEAFILE_FASTCGI_HOST=0.0.0.0 \
@@ -85,4 +85,4 @@ Run mariadb or mysql image:
 - `ACTIVATE_AFTER_REGISTRATION` - default: `True` - activate user when registration complete. Default is `True`, if set to `False`, new users need to be activated by admin in admin panel.
 - `SEAFILE_FASTCGI_HOST` - default: not set - serve FastCGI for Seahub on `$SEAFILE_FASTCGI_HOST:8000` for reverse proxy
 - `WEBDAV_FASTCGI` - default: `false` if `$SEAFILE_FASTCGI_HOST` is not set, `true` otherwise - serve FastCGI for webdav on port `8080` for reverse proxy
-- `WEBDAV_SHARE_NAME` - default: `/` if `WEBDAV_FASTCGI` equals `false` or is not set, `/seafdav` otherwise
+- `WEBDAV_SHARE_NAME` - default: `/` if `$WEBDAV_FASTCGI` equals `false` or is not set, `/seafdav` otherwise

@@ -8,7 +8,7 @@ ENV \
     SITE_BASE=http://seafile.example.com \
     SITE_ROOT=/
 
-EXPOSE 1201 10001 8000 8080 8082
+EXPOSE 12001 10001 8000 8080 8082
 
 RUN \
     export DEBIAN_FRONTEND=noninteractive && \
