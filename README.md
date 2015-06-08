@@ -4,56 +4,65 @@
 
 First, you need to run mariadb or mysql image:
 
-    docker run \
-        --name seafile-mariadb \
-        -v /$SOME_ABS_PATH/maria-seafile:/var/lib/mysql \
-        -e MYSQL_ROOT_PASSWORD=thisisabsolutlyinsecure \
-        -e MYSQL_USER=seafile \
-        -e MYSQL_PASSWORD=everybodyknowsthat \
-        -d mariadb:latest
+```shell
+docker run \
+    --name seafile-mariadb \
+    -v /$SOME_ABS_PATH/maria-seafile:/var/lib/mysql \
+    -e MYSQL_ROOT_PASSWORD=thisisabsolutlyinsecure \
+    -e MYSQL_USER=seafile \
+    -e MYSQL_PASSWORD=everybodyknowsthat \
+    -d mariadb:latest
+```
 
 ### Run this image
 
-    docker run \
-        --name seafile \
-        -v /$SOME_ABS_PATH/seafile-data:/seafile-data/ \
-        -p 80:8000 -p 8082:8082 -p 8080:8080 -p 10001:10001 -p 12001:12001 \
-        --link seafile-mariadb:db \
-        -e SITE_BASE=http://127.0.0.1 \
-        -d podshumok/seafile
+```shell
+docker run \
+   --name seafile \
+   -v /$SOME_ABS_PATH/seafile-data:/seafile-data/ \
+   -p 80:8000 -p 8082:8082 -p 8080:8080 -p 10001:10001 -p 12001:12001 \
+   --link seafile-mariadb:db \
+   -e SITE_BASE=http://127.0.0.1 \
+   -d podshumok/seafile
+```
 
 ### Run with nginx
 
 1. Run this image with `-e SEAFILE_FASTCGI_HOST=0.0.0.0`:
 
-        docker run \
-           --name seafile \
-            -v /$SOME_ABS_PATH/seafile-data:/seafile-data/ \
-            -p 10001:10001 -p 12001:12001 \
-            --link seafile-mariadb:db \
-            -e SITE_BASE=http://127.0.0.1 \
-            -e SEAFILE_FASTCGI_HOST=0.0.0.0 \
-            -d podshumok/seafile
+    ```shell
+    docker run \
+        --name seafile \
+        -v /$SOME_ABS_PATH/seafile-data:/seafile-data/ \
+        -p 10001:10001 -p 12001:12001 \
+        --link seafile-mariadb:db \
+        -e SITE_BASE=http://127.0.0.1 \
+        -e SEAFILE_FASTCGI_HOST=0.0.0.0 \
+        -d podshumok/seafile
+    ```
 
 2. Create `/$SOME_ABS_PATH/conf.d/default.conf` (nginx configuration file):
 
-        mkdir -p /$SOME_ABS_PATH/conf.d
-        wget https://github.com/podshumok/docker-seafile/raw/master/conf.d/default.conf \
-            -O /$SOME_ABS_PATH/conf.d/default.conf
+    ```shell
+    mkdir -p /$SOME_ABS_PATH/conf.d
+    wget https://github.com/podshumok/docker-seafile/raw/master/conf.d/default.conf \
+        -O /$SOME_ABS_PATH/conf.d/default.conf
+    ```
 
 3. Run nginx image:
 
-        docker run \
-            --name seafile-nginx \
-            -p 80:80 \
-            --link seafile:seafile \
-            -v /$SOME_ABS_PATH/conf.d:/etc/nginx/conf.d \
-            -v /$SOME_ABS_PATH/nginxlog:/var/log/nginx \
-            -v /$SOME_EMPTY_DIR:/etc/nginx/sites-enabled \
-            -v /$SOME_EMPTY_DIR:/etc/nginx/certs \
-            -v /$SOME_EMPTY_DIR:/var/www/html \
-            -d nginx
-
+    ```shell
+    docker run \
+        --name seafile-nginx \
+        -p 80:80 \
+        --link seafile:seafile \
+        -v /$SOME_ABS_PATH/conf.d:/etc/nginx/conf.d \
+        -v /$SOME_ABS_PATH/nginxlog:/var/log/nginx \
+        -v /$SOME_EMPTY_DIR:/etc/nginx/sites-enabled \
+        -v /$SOME_EMPTY_DIR:/etc/nginx/certs \
+        -v /$SOME_EMPTY_DIR:/var/www/html \
+        -d nginx
+    ```
 
 ## Run seafile with docker-compose
 
@@ -68,51 +77,55 @@ Create project tree:
     |--- data/
     |--- docker-compose.yml
 
-Template  for `conf.d/default.conf` is [here](https://github.com/podshumok/docker-seafile/raw/master/conf.d/default.conf).
+Template  for `conf.d/default.conf` is [here](https://github.com/podshumok/docker-seafile/blob/master/conf.d/default.conf).
 If you need HTTPS replace `listen 80;` with `listen 443 ssl;` and add `ssl_certificate` and `ssl_certificate_key` e.g.:
 
-    server {
-        listen 443 ssl;
-        ssl_certificate         certs/seafile.crt;
-        ssl_certificate_key     certs/seafile.key;
-        ...
+```nginx
+server {
+    listen 443 ssl;
+    ssl_certificate         certs/seafile.crt;
+    ssl_certificate_key     certs/seafile.key;
+    ...
+```
 
 `docker-compose.yml` sketch:
 
-    mariadb:
-      image: mariadb:latest
-      volumes:
-        - ./data/maria:/var/lib/mysql
-        - ./data/log/maria:/var/log/mysql
-     environment:
-        - MYSQL_ROOT_PASSWORD=pleasechangeitorelse
-        - MYSQL_USER=seafile
-        - MYSQL_PASSWORD=thisoneshouldbechangedtoo
+```yaml
+mariadb:
+  image: mariadb:latest
+  volumes:
+    - ./data/maria:/var/lib/mysql
+    - ./data/log/maria:/var/log/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=pleasechangeitorelse
+    - MYSQL_USER=seafile
+    - MYSQL_PASSWORD=thisoneshouldbechangedtoo
 
-    main:
-      image: podshumok/seafile
-      volumes:
-        - ./data/seafile:/seafile-data/
-        - ./data/log/seafile:/var/log/seafile
-      links:
-        - mariadb:db
-      environment:
-        # replace http:// with https:// for SSL configuration
-        - SITE_BASE=http://127.0.0.1
-        - SEAFILE_FASTCGI_HOST=0.0.0.0
+main:
+  image: podshumok/seafile
+  volumes:
+    - ./data/seafile:/seafile-data/
+    - ./data/log/seafile:/var/log/seafile
+  links:
+    - mariadb:db
+  environment:
+    # replace http:// with https:// for SSL configuration
+    - SITE_BASE=http://127.0.0.1
+    - SEAFILE_FASTCGI_HOST=0.0.0.0
 
-    nginx:
-      image: nginx
-      ports:
-        - "443:443"
-      links:
-        - seafile
-      volumes:
-        - ./conf.d:/etc/nginx/conf.d:ro
-        - ./ssl:/etc/nginx/certs:ro
-        - ./data/log/nginx:/var/log/nginx
-        - /tmp/empty:/etc/nginx/sites-enabled:ro
-        - /tmp/empty:/var/www/html:ro
+nginx:
+  image: nginx
+  ports:
+    - "443:443"
+  links:
+    - seafile
+  volumes:
+    - ./conf.d:/etc/nginx/conf.d:ro
+    - ./ssl:/etc/nginx/certs:ro
+    - ./data/log/nginx:/var/log/nginx
+    - /tmp/empty:/etc/nginx/sites-enabled:ro
+    - /tmp/empty:/var/www/html:ro
+```
 
 Now just run `docker-compose up` in the project root.
 

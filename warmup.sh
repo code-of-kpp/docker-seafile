@@ -5,19 +5,17 @@ export PYTHONPATH=$ROOT/seafile/lib/python2.6/site-packages:$ROOT/seafile/lib64/
 export PYTHONPATH=$ROOT/seafile/lib/python2.7/site-packages:$ROOT/seafile/lib64/python2.7/site-packages:$PYTHONPATH
 export CCNET_CONF_DIR=/usr/local/seafile/ccnet/
 
-mkdir -p /usr/local/seafile/seafile-data/library-template || :
+mkdir -p /seafile-data/library-template || :
 
-ln -s $ROOT/setup-seafile-mysql.py $ROOT/ssm.py
 cd $ROOT
-ln -s /usr/local/bin/makedb.py $ROOT
-
 python -m makedb
+
 rm $ROOT/makedb.py
+rm $ROOT/ssm.py
+rm $ROOT/ssq.py
 
 bash /usr/local/bin/seafile.conf.sh
 bash /usr/local/bin/seahub_settings.py.sh
-
-ln -s /usr/local/seafile/conf/seafdav.conf /etc/seafile/
 
 if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
     export WEBDAV_FASTCGI=true
@@ -46,21 +44,21 @@ sed -i "s@SERVICE_URL = http://127.0.0.1:8000@SERVICE_URL = ${SERVICE_BASE:-$SIT
 
 true | /usr/local/seafile/seafile-server/upgrade/minor-upgrade.sh
 
-export _create_="
+cat > prepare_.py <<EOF
 import os
 
 import check_init_admin
 
 if check_init_admin.need_create_admin():
-   check_init_admin.create_admin(os.environ.get('ADMIN_EMAIL', 'admin@example.com'),
-                                 os.environ.get('ADMIN_PASSWORD', 'youcannotguessit')
+   check_init_admin.create_admin(${ADMIN_EMAIL:-admin@example.com}),
+                                 ${ADMIN_PASSWORD:-youcannotguessit})
 )
-"
+EOF
 . /usr/local/bin/clean_env.sh
 
 ./seafile.sh start
-python -c "$_create_"
-unset _create_
+python -m prepare_
+rm prepare_.py
 
 if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
    ./seahub.sh start-fastcgi

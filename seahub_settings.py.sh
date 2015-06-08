@@ -2,8 +2,6 @@
 
 export CONF=/usr/local/seafile/seahub_settings.py
 
-ln -s $CONF /etc/seafile/seahub_settings.py
-
 if [ -n "$MEMCACHE_HOST" ]; then
 cat >> $CONF << EOF
 

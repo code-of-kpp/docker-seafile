@@ -5,29 +5,37 @@ ENV \
     ADMIN_EMAIL=admin@example.com \
     ADMIN_PASSWORD=youcannotguessit \
     SITE_NAME=seafile \
-    SITE_BASE=http://seafile.example.com \
+    SITE_BASE=http://127.0.0.1 \
     SITE_ROOT=/
 
 EXPOSE 12001 10001 8000 8080 8082
 
 RUN \
     export DEBIAN_FRONTEND=noninteractive && \
+    export DOWNLOAD_ROOT=https://bintray.com/artifact/download/seafile-org/seafile && \
     apt-get update && dpkg --clear-selections && apt-get autoremove -y && \
     apt-get dist-upgrade -y && \
-    apt-get install -y wget "libmariadb-?client.*-dev" openssl && \
-    apt-get install -y python2.7 python-pkg-resources python-flup python-imaging python-mysqldb python-memcache && \
-    mkdir -p /usr/local/seafile/ && \
+    apt-get install -y \
+        wget "libmariadb-?client.*-dev" openssl sqlite3 \
+        python2.7 python-imaging python-mysqldb python-memcache && \
+    mkdir -p /usr/local/seafile/ && mkdir -p /etc/seafile/ && mkdir -p /seafile-data/ && \
     mkdir -p /run/seafile/ && ln -sT /run/seafile /usr/local/seafile/pids && \
     mkdir -p /var/log/seafile/ && ln -sT /var/log/seafile /usr/local/seafile/logs && \
-    mkdir -p /seafile-data/ && ln -sT /seafile-data/ /usr/local/seafile/seafile-data && \
+    ln -sT /seafile-data/ /usr/local/seafile/seafile-data && \
+    ln -sT /seafile-data/ /usr/local/seafile/seahub-data && \
     cd /usr/local/seafile && \
-    wget -O- https://bintray.com/artifact/download/seafile-org/seafile/seafile-server_${SEAFILE_VERSION}.tar.gz | tar -xz && \
-    mv seafile-server* seafile-server && \
+    wget -O- $DOWNLOAD_ROOT/seafile-server_${SEAFILE_VERSION}.tar.gz | tar -xz && \
+    mv seafile-server* seafile-server && cd seafile-server && \
+    ln -s setup-seafile-mysql.py ssm.py && ln -s setup-seafile.py ssq.py && \
+    ln -s /usr/local/seafile/conf/seafdav.conf /etc/seafile/ && \
+    ln -s /usr/local/seafile/ccnet/ccnet.conf /etc/seafile/ccnet.conf && \
+    ln -s /usr/local/seafile/seafile-data/seafile.conf /etc/seafile/seafile.conf && \
+    ln -s /usr/local/seafile/seahub_settings.py /etc/seafile/seahub_settings.py && \
     SUDO_FORCE_REMOVE=yes apt-get purge -y wget binutils perl libpython3.4-stdlib manpages-dev ucf sudo && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf /var/log/*/*
 
 ADD *.sh /usr/local/bin/
-ADD *.py /usr/local/bin/
+ADD *.py /usr/local/seafile/seafile-server/
 
 VOLUME /seafile-data
 
