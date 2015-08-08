@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 ENV \
-    SEAFILE_VERSION=4.2.2_x86-64 \
+    SEAFILE_VERSION=4.2.8_x86-64 \
     ADMIN_EMAIL=admin@example.com \
     ADMIN_PASSWORD=youcannotguessit \
     SITE_NAME=seafile \
@@ -24,7 +24,7 @@ RUN \
     ln -sT /seafile-data/ /usr/local/seafile/seafile-data && \
     ln -sT /seafile-data/ /usr/local/seafile/seahub-data && \
     cd /usr/local/seafile && \
-    wget -O- $DOWNLOAD_ROOT/seafile-server_${SEAFILE_VERSION}.tar.gz | tar -xz && \
+    wget -q -O- $DOWNLOAD_ROOT/seafile-server_${SEAFILE_VERSION}.tar.gz | tar -xz && \
     mv seafile-server* seafile-server && cd seafile-server && \
     ln -s setup-seafile-mysql.py ssm.py && ln -s setup-seafile.py ssq.py && \
     ln -s /usr/local/seafile/conf/seafdav.conf /etc/seafile/ && \
