@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 ENV \
-    SEAFILE_VERSION=4.2.8_x86-64 \
+    SEAFILE_VERSION=4.3.1_x86-64 \
     ADMIN_EMAIL=admin@example.com \
     ADMIN_PASSWORD=youcannotguessit \
     SITE_NAME=seafile \
@@ -18,13 +18,17 @@ RUN \
     apt-get install -y \
         wget "libmariadb-?client.*-dev" openssl sqlite3 \
         python2.7 python-imaging python-mysqldb python-memcache && \
+    export URL=`wget -q -O- https://www.seafile.com/en/download/ | \
+                grep -E 'server.*x86-64.tar.gz' | head -n 1 | \
+                grep --only-matching -E 'http[^\"]+' || \
+                echo $DOWNLOAD_ROOT/seafile-server_${SEAFILE_VERSION}.tar.gz` && \
     mkdir -p /usr/local/seafile/ && mkdir -p /etc/seafile/ && mkdir -p /seafile-data/ && \
     mkdir -p /run/seafile/ && ln -sT /run/seafile /usr/local/seafile/pids && \
     mkdir -p /var/log/seafile/ && ln -sT /var/log/seafile /usr/local/seafile/logs && \
     ln -sT /seafile-data/ /usr/local/seafile/seafile-data && \
     ln -sT /seafile-data/ /usr/local/seafile/seahub-data && \
     cd /usr/local/seafile && \
-    wget -q -O- $DOWNLOAD_ROOT/seafile-server_${SEAFILE_VERSION}.tar.gz | tar -xz && \
+    wget -q -O- $URL | tar -xz && \
     mv seafile-server* seafile-server && cd seafile-server && \
     ln -s setup-seafile-mysql.py ssm.py && ln -s setup-seafile.py ssq.py && \
     ln -s /usr/local/seafile/conf/seafdav.conf /etc/seafile/ && \
