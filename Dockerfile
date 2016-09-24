@@ -16,8 +16,8 @@ RUN \
     apt-get update && dpkg --clear-selections && apt-get autoremove -y && \
     apt-get dist-upgrade -y && \
     apt-get install -y \
-        wget "libmariadb-?client.*-dev" openssl sqlite3 \
-        python2.7 python-imaging python-mysqldb python-memcache && \
+        wget "libmariadb-?client.*-dev" openssl sqlite3 python2.7 \
+        python-urllib3 python-imaging python-mysqldb python-memcache && \
     export URL=`wget -q -O- https://www.seafile.com/en/download/ | \
                 grep -E 'server.*x86-64.tar.gz' | head -n 1 | \
                 grep --only-matching -E 'http[^\"]+' || \
@@ -35,7 +35,7 @@ RUN \
     ln -s /usr/local/seafile/ccnet/ccnet.conf /etc/seafile/ccnet.conf && \
     ln -s /usr/local/seafile/seafile-data/seafile.conf /etc/seafile/seafile.conf && \
     ln -s /usr/local/seafile/seahub_settings.py /etc/seafile/seahub_settings.py && \
-    SUDO_FORCE_REMOVE=yes apt-get purge -y wget binutils perl libpython3.4-stdlib manpages-dev ucf sudo && \
+    SUDO_FORCE_REMOVE=yes apt-get purge -y wget binutils perl manpages-dev ucf sudo && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf /var/log/*/*
 
 ADD *.sh /usr/local/bin/
