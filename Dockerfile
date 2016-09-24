@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 ENV \
-    SEAFILE_VERSION=4.3.1_x86-64 \
+    SEAFILE_VERSION=6.0.4_x86-64 \
     ADMIN_EMAIL=admin@example.com \
     ADMIN_PASSWORD=youcannotguessit \
     SITE_NAME=seafile \
