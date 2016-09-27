@@ -1,9 +1,8 @@
 #!/bin/sh
 
 export ROOT=/usr/local/seafile/seafile-server
-export PYTHONPATH=$ROOT/seafile/lib/python2.6/site-packages:$ROOT/seafile/lib64/python2.6/site-packages:$ROOT/seahub/thirdpart:$PYTHONPATH
-export PYTHONPATH=$ROOT/seafile/lib/python2.7/site-packages:$ROOT/seafile/lib64/python2.7/site-packages:$PYTHONPATH
-export CCNET_CONF_DIR=/usr/local/seafile/ccnet/
+export PYTHONPATH=$ROOT/:$ROOT/seahub:$ROOT/seahub/thirdpart:$PYTHONPATH
+export CCNET_CONF_DIR=/usr/local/seafile/conf/
 
 mkdir -p /seafile-data/library-template || :
 
@@ -40,7 +39,7 @@ share_name = ${WEBDAV_SHARE_NAME:-/}
 EOF
 
 sed -i "s@SERVICE_URL = http://127.0.0.1:8000@SERVICE_URL = ${SERVICE_BASE:-$SITE_BASE/}@" \
-    /usr/local/seafile/ccnet/ccnet.conf
+    ${CCNET_CONF_DIR}/ccnet.conf
 
 true | /usr/local/seafile/seafile-server/upgrade/minor-upgrade.sh
 
@@ -50,8 +49,8 @@ import os
 import check_init_admin
 
 if check_init_admin.need_create_admin():
-   check_init_admin.create_admin(${ADMIN_EMAIL:-admin@example.com}),
-                                 ${ADMIN_PASSWORD:-youcannotguessit})
+   check_init_admin.create_admin('${ADMIN_EMAIL:-admin@example.com}'),
+                                 '${ADMIN_PASSWORD:-youcannotguessit}')
 )
 EOF
 . /usr/local/bin/clean_env.sh
