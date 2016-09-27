@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat >> /usr/local/seafile/seafile-data/seafile.conf <<EOF
+cat >> /usr/local/seafile/conf/seafile.conf <<EOF
 [quota]
 # default user quota in GB, integer only
 default = ${QUOTA:-2}
