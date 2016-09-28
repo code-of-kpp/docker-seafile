@@ -14,8 +14,8 @@ cd $ROOT
 python -m makedb
 
 rm $ROOT/makedb.py
-rm $ROOT/ssm.py
-rm $ROOT/ssq.py
+#rm $ROOT/ssm.py
+#rm $ROOT/ssq.py
 
 bash /usr/local/bin/seafile.conf.sh
 bash /usr/local/bin/seahub_settings.py.sh
@@ -35,7 +35,7 @@ fi
 
 cat > /usr/local/seafile/conf/seafdav.conf <<EOF
 [WEBDAV]
-enabled = ${WEBDAV_ENABLED:true}
+enabled = ${WEBDAV_ENABLED:-true}
 host= 0.0.0.0
 port = 8080
 fastcgi = ${WEBDAV_FASTCGI:-false}
@@ -63,7 +63,7 @@ SERVICE_URL = ${CCNET_URL:-${ccnet_url}}
 PORT = 13419
 EOF
 
-seaf_server_init \
+seaf-server-init \
     --central-config-dir /usr/local/seafile/conf/ \
     --seafile-dir /seafile-data/
 
