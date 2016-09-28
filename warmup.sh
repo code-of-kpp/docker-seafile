@@ -1,14 +1,20 @@
 #!/bin/sh -e
 
 export ROOT=/usr/local/seafile/seafile-server
-export PYTHONPATH=$ROOT/:$ROOT/seahub:$ROOT/seahub/thirdpart:${ROOT}/seafile/lib64/python2.6/site-packages/:$PYTHONPATH
-export CCNET_CONF_DIR=/usr/local/seafile/conf
+
 export LD_LIBRARY_PATH=${ROOT}/seafile/lib/:${ROOT}/seafile/lib64:${LD_LIBRARY_PATH}
 export PATH=${ROOT}/seafile/bin:${PATH}
 
+export CCNET_CONF_DIR=/usr/local/seafile/ccnet
+export SEAFILE_CONF_DIR=/seafile-data/
+export SEAFILE_CENTRAL_CONF_DIR=/usr/local/seafile/conf
+export PYTHONPATH=${ROOT}/:${ROOT}/seafile/lib/python2.6/site-packages:${ROOT}/seafile/lib64/python2.6/site-packages:${ROOT}/sea
+hub:${ROOT}/seahub/thirdpart:$PYTHONPATH
+export PYTHONPATH=${ROOT}/seafile/lib/python2.7/site-packages:${ROOT}/seafile/lib64/python2.7/site-packages:$PYTHONPATH
+
 mkdir -p /seafile-data/library-template || :
 mkdir -p /seafile-data/avatars || :
-mkdir -p ${CCNET_CONF_DIR}
+mkdir -p ${SEAFILE_CENTRAL_CONF_DIR}
 
 cd $ROOT
 python -m makedb
@@ -33,7 +39,7 @@ if [ -n "$WEBDAV_FASTCGI" -a "$WEBDAV_FASTCGI" != "false" ]; then
     fi
 fi
 
-cat > /usr/local/seafile/conf/seafdav.conf <<EOF
+cat > ${SEAFILE_CENTRAL_CONF_DIR}/seafdav.conf <<EOF
 [WEBDAV]
 enabled = ${WEBDAV_ENABLED:-true}
 host= 0.0.0.0
@@ -43,14 +49,14 @@ share_name = ${WEBDAV_SHARE_NAME:-/}
 EOF
 
 ccnet-init \
-    -c /usr/local/seafile/ccnet/ \
-    -F /usr/local/seafile/conf/ \
+    -c ${CCNET_CONF_DIR} \
+    -F ${SEAFILE_CENTRAL_CONF_DIR} \
     --name ${SITE_NAME} \
     --host ${SITE_NAME} || echo 'using existing ccnet configuration'
 
-ccnet_id=$(grep ID /usr/local/seafile/conf/ccnet.conf | cut -f 3 -d ' ')
-ccnet_user=$(grep USER /usr/local/seafile/conf/ccnet.conf | cut -f 3 -d ' ')
-ccnet_url=$(grep SERVICE_URL /usr/local/seafile/conf/ccnet.conf | cut -f 3 -d ' ')
+ccnet_id=$(grep ID ${SEAFILE_CENTRAL_CONF_DIR}/ccnet.conf | cut -f 3 -d ' ')
+ccnet_user=$(grep USER ${SEAFILE_CENTRAL_CONF_DIR}/ccnet.conf | cut -f 3 -d ' ')
+ccnet_url=$(grep SERVICE_URL ${SEAFILE_CENTRAL_CONF_DIR}/ccnet.conf | cut -f 3 -d ' ')
 
 cat > ${CCNET_CONF_DIR}/ccnet.conf <<EOF
 [General]
@@ -64,12 +70,12 @@ PORT = 13419
 EOF
 
 seaf-server-init \
-    --central-config-dir /usr/local/seafile/conf/ \
+    --central-config-dir ${SEAFILE_CENTRAL_CONF_DIR} \
     --seafile-dir /seafile-data/
 
-echo /seafile-data/ > /usr/local/seafile/ccnet/seafile.ini
+echo /seafile-data/ > ${CCNET_CONF_DIR}/seafile.ini
 
-true | /usr/local/seafile/seafile-server/upgrade/minor-upgrade.sh
+true | ${ROOT}/upgrade/minor-upgrade.sh
 
 cat > prepare_.py <<EOF
 import os
@@ -84,12 +90,7 @@ EOF
 
 ./seafile.sh start
 
-( \
-    . /usr/local/seafile/seafile-server/seahub.sh stop || \
-    prepare_env && \
-    python -m prepare_ \
-)
-
+python -m prepare_ \
 rm prepare_.py
 
 if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
@@ -98,4 +99,4 @@ else
    ./seahub.sh start
 fi
 
-./seaf-fsck.sh  -r -e
+./seaf-fsck.sh  -r
