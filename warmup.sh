@@ -4,7 +4,7 @@ export ROOT=/usr/local/seafile/seafile-server
 export PYTHONPATH=$ROOT/:$ROOT/seahub:$ROOT/seahub/thirdpart:$PYTHONPATH
 export CCNET_CONF_DIR=/usr/local/seafile/conf
 export INSTALLPATH=/usr/local/seafile/seafile-server/
-export SEAFILE_LD_LIBRARY_PATH=${INSTALLP${INSTALLPATH}/seafile/binATH}/seafile/lib/:${INSTALLPATH}/seafile/lib64:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${INSTALLPATH}/seafile/lib/:${INSTALLPATH}/seafile/lib64:${LD_LIBRARY_PATH}
 export PATH=${INSTALLPATH}/seafile/bin:${PATH}
 
 mkdir -p /seafile-data/library-template || :
