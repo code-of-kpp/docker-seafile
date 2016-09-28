@@ -8,9 +8,9 @@ export PATH=${ROOT}/seafile/bin:${PATH}
 export CCNET_CONF_DIR=/usr/local/seafile/ccnet
 export SEAFILE_CONF_DIR=/seafile-data/
 export SEAFILE_CENTRAL_CONF_DIR=/usr/local/seafile/conf
-export PYTHONPATH=${ROOT}/:${ROOT}/seafile/lib/python2.6/site-packages:${ROOT}/seafile/lib64/python2.6/site-packages:${ROOT}/sea
-hub:${ROOT}/seahub/thirdpart:$PYTHONPATH
-export PYTHONPATH=${ROOT}/seafile/lib/python2.7/site-packages:${ROOT}/seafile/lib64/python2.7/site-packages:$PYTHONPATH
+export PYTHONPATH=${ROOT}/:${ROOT}/seafile/lib/python2.6/site-packages:${PYTHONPATH}
+export PYTHONPATH=${ROOT}/seafile/lib64/python2.6/site-packages:${ROOT}/seahub:${ROOT}/seahub/thirdpart:${PYTHONPATH}
+export PYTHONPATH=${ROOT}/seafile/lib/python2.7/site-packages:${ROOT}/seafile/lib64/python2.7/site-packages:${PYTHONPATH}
 
 mkdir -p /seafile-data/library-template || :
 mkdir -p /seafile-data/avatars || :
