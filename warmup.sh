@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 export ROOT=/usr/local/seafile/seafile-server
 export PYTHONPATH=$ROOT/:$ROOT/seahub:$ROOT/seahub/thirdpart:${ROOT}/seafile/lib64/python2.6/site-packages/:$PYTHONPATH
@@ -7,6 +7,7 @@ export LD_LIBRARY_PATH=${ROOT}/seafile/lib/:${ROOT}/seafile/lib64:${LD_LIBRARY_P
 export PATH=${ROOT}/seafile/bin:${PATH}
 
 mkdir -p /seafile-data/library-template || :
+mkdir -p /seafile-data/avatars || :
 mkdir -p ${CCNET_CONF_DIR}
 
 cd $ROOT
@@ -66,6 +67,8 @@ seaf-server-init \
     --central-config-dir /usr/local/seafile/conf/ \
     --seafile-dir /seafile-data/
 
+echo /seafile-data/ > /usr/local/seafile/ccnet/seafile.ini
+
 true | /usr/local/seafile/seafile-server/upgrade/minor-upgrade.sh
 
 cat > prepare_.py <<EOF
@@ -79,12 +82,13 @@ if check_init_admin.need_create_admin():
 EOF
 . /usr/local/bin/clean_env.sh
 
-echo /seafile-data/ > /usr/local/seafile/ccnet/seafile.ini
-
 ./seafile.sh start
-SEAFILE_CENTRAL_CONF_DIR=/usr/local/seafile/conf \
-CCNET_CONF_DIR=/usr/local/seafile/ccnet.conf \
-    python -m prepare_
+
+( \
+    . /usr/local/seafile/seafile-server/seahub.sh stop || \
+    prepare_env && \
+    python -m prepare_ \
+)
 
 rm prepare_.py
 
