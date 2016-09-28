@@ -94,9 +94,9 @@ python -m prepare_ \
 rm prepare_.py
 
 if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
-   ./seahub.sh start-fastcgi
+   LD_LIBRARY_PATH= ./seahub.sh start-fastcgi
 else
-   ./seahub.sh start
+   LD_LIBRARY_PATH= ./seahub.sh start
 fi
 
 ./seaf-fsck.sh  -r
