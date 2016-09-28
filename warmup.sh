@@ -79,8 +79,10 @@ if check_init_admin.need_create_admin():
 EOF
 . /usr/local/bin/clean_env.sh
 
+echo /seafile-data/ > /usr/local/seafile/ccnet/seafile.ini
+
 ./seafile.sh start
-python -m prepare_
+SEAFILE_CENTRAL_CONF_DIR=/usr/local/seafile/conf python -m prepare_
 rm prepare_.py
 
 if [ -n "$SEAFILE_FASTCGI_HOST" ]; then
