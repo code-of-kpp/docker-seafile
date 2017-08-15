@@ -101,7 +101,7 @@ mariadb:
     - MYSQL_USER=seafile
     - MYSQL_PASSWORD=thisoneshouldbechangedtoo
 
-main:
+seafile:
   image: podshumok/seafile
   volumes:
     - ./data/seafile:/seafile-data/
